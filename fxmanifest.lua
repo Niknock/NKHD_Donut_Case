@@ -3,7 +3,7 @@ game 'gta5'
 
 author 'Niknock HD'
 description 'NKHD Donut Case'
-version '1.0.0'
+version '1.1.0'
 
 server_scripts {
     'config.lua',
