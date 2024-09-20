@@ -1,19 +1,20 @@
 local isNearDonutCase = false
 local showingPrompt = false
-local targetAdded = false 
+local targetAdded = false
+local donutCaseEntity = nil 
 
 Citizen.CreateThread(function()
     while true do
         local playerPed = PlayerPedId()
         local playerCoords = GetEntityCoords(playerPed)
 
-        local donutCase = GetClosestObjectOfType(playerCoords, 2.0, GetHashKey(Config.DonutCaseProp), false, false, false)
+        donutCaseEntity = GetClosestObjectOfType(playerCoords, 2.0, GetHashKey(Config.DonutCaseProp), false, false, false)
         
-        if DoesEntityExist(donutCase) then
+        if DoesEntityExist(donutCaseEntity) then
             isNearDonutCase = true
 
             if Config.UseQTarget and not targetAdded then
-                exports['qtarget']:AddTargetEntity(donutCase, {
+                exports['qtarget']:AddTargetEntity(donutCaseEntity, {
                     options = {
                         {
                             event = 'donut:pickup',
@@ -23,11 +24,11 @@ Citizen.CreateThread(function()
                     },
                     distance = 2.0
                 })
-                targetAdded = true 
+                targetAdded = true
             end
 
             if Config.UseOxTarget and not targetAdded then
-                exports['ox_target']:addLocalEntity(donutCase, {
+                exports['ox_target']:addLocalEntity(donutCaseEntity, {
                     {
                         event = 'donut:pickup',
                         icon = 'fas fa-donut',
@@ -38,16 +39,6 @@ Citizen.CreateThread(function()
             end
 
         else
-
-            if targetAdded then
-
-                if Config.UseQTarget then
-                    exports['qtarget']:RemoveTargetEntity(donutCase)
-                elseif Config.UseOxTarget then
-                    exports['ox_target']:removeLocalEntity(donutCase)
-                end
-                targetAdded = false
-            end
             isNearDonutCase = false
             showingPrompt = false
         end
@@ -58,9 +49,5 @@ end)
 
 RegisterNetEvent('donut:pickup')
 AddEventHandler('donut:pickup', function()
-    if Config.Framework == 'ESX' then
-        TriggerServerEvent('donut:giveDonut')
-    elseif Config.Framework == 'QBCore' then
-        TriggerServerEvent('donut:giveDonut')
-    end
+    TriggerServerEvent('donut:giveDonut')
 end)
